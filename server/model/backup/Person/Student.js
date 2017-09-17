@@ -1,4 +1,4 @@
-const { authorization } = require('../authorization');
+const authorization = require('../authorization');
 const { ObjectID } = require('mongodb');
 const typeDefs = ` 
 

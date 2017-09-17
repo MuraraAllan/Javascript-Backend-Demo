@@ -5,4 +5,4 @@ const authorization = async (params) => {
   throw new Error('Not Authorized');
 }
 
-module.exports.authorization = authorization
+module.exports = authorization

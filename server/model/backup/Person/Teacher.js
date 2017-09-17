@@ -1,4 +1,3 @@
-const { authorization } = require('../authorization');
 const typeDefs = ` 
   type Teacher {
     id: ID!
@@ -6,7 +5,7 @@ const typeDefs = `
     email: String
   }
  
-  input TeacherSignUp {
+  input TeacherSingUp {
     email: TEACHER_AUTH_PROVIDER
   }
 
@@ -33,16 +32,17 @@ const typeDefs = `
 const resolvers = {
   Mutation: {
     createTeacher: async (root, data, {mongo: {Teachers}}) => {
-      //await authorization({user, authLevel: global.teacherLevel}); 
+      await authorization({user, authLevel: global.teacherLevel}); 
       const response = await Teachers.insert(data);
       return Object.assign({id: response.insertedIds[0]}, data);
     },
     signInTeacher: async (root, data, {mongo: {Teachers}}) => {
+      await authorization({user, authLevel: global.teacherLevel}); 
       const teacher = await Teachers.findOne({email: data.email});
       if (data.password === teacher.password) {
         return {token: `token-${teacher.email}`, teacher};
       }
-      throw new Error('Invalid Username/Password combination!');
+      throw new Error('Invalid Password');
     },
   },
   Query: {
