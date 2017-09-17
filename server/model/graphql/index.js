@@ -2,9 +2,9 @@
 require('./functions');
 const {makeExecutableSchema} = require('graphql-tools');
 const merge = require('lodash').merge;
-const Person = require('./Person/');
-const Cohort = require('./Cohort/');
-const Poll = require('./Polling/');
+const Person = require('./Person');
+const Cohort = require('./Cohort');
+const Poll = require('./Polling');
 const Question = require('./Questions/');
 const pollResolvers = Poll.resolvers;
 const rootResolvers = require('./resolvers');
