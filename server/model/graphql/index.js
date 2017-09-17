@@ -1,5 +1,3 @@
-//global resolver functions
-require('./functions');
 const {makeExecutableSchema} = require('graphql-tools');
 const merge = require('lodash').merge;
 const Person = require('./Person');
