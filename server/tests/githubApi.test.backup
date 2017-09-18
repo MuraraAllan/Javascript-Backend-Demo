@@ -1,4 +1,4 @@
-const chai = require('chai');
+/*const chai = require('chai');
 const expect = chai.expect;
 const chaiHTTP = require('chai-http');
 chai.use(chaiHTTP);
@@ -38,4 +38,4 @@ describe('third requisition over githubapi', () => {
 });
 
 
-
+*/

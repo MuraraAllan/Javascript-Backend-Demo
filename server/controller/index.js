@@ -4,7 +4,6 @@ const STATUS_OK = 200;
 const User = require('../model/mongoose/user');
 const { getUserToken } = require('../utils');
 
-let type = 'jwt';
 const sendUserError = (res, msg = 'something goes wrong, please contact support@nothing.com :)' ) => {
   res.status(STATUS_USER_ERROR);
   res.json({error: msg});
@@ -18,8 +17,6 @@ const sendStatusOk = (res ,msg = {ok: true}) => {
 } 
 const checkUserData = (req) => {
   if (!req.body.username || !req.body.password) {
-    console.log(req.body.username);
-    console.log(req.body.password);
     return false;
   }
   return true;
@@ -38,14 +35,11 @@ const signUp = (req, res) => {
   const password = req.body.password;
   const user = new User({ email, password });
   user.save((err, user) => {
-    console.log('error',err);
     if (err) {
       sendUserError(res, err);
       return;
     }
-    console.log('created', user);
     const token = getUserToken(user); 
-    console.log('token',token);
     sendStatusOk(res, {token});
     return;
   });
