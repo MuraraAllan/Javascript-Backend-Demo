@@ -4,6 +4,7 @@ const model = mongoose.model;
 const bcrypt = require('bcrypt');
 const SALT_COST = 12;
 mongoose.promise = global.Promise;
+mongoose.mpromise = global.Promise;
 //model user will be responsible to return bcrypted password 
 const userSchema = new Schema({
   name: {   
@@ -11,19 +12,28 @@ const userSchema = new Schema({
   },
   password : {
     type: String,
+    required: true,
   },
   email: {
     type: String,
-  }
+    unique: true,
+    lowercase: true,
+    required: true,
+    validate: {
+      validator: (email) => {
+        return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+      }
+    }
+  },
 });
-
+//compare provided password with the stored bcrypted password
 userSchema.methods.comparePassword = function (pass) {
   return new Promise((resolve, reject) => {   
     resolve(bcrypt.compare(pass, this.password))
   }).then((res) => res);
 };
 
-//implement a pre save hook that convert password into hashed password
+//pre save hook to convert password into hashed password
 userSchema.pre('save', function (next) {
   if (this.password && this.isNew) {
     bcrypt.genSalt(SALT_COST, (err, salt) => {
