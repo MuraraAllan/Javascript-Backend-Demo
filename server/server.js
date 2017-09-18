@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const authMiddleware = require('./controller');
+const authMiddleware = require('./controller/auth');
 const server = express();
 const session = require('express-session');
 const PORT = 8000; 
@@ -8,10 +8,10 @@ const mongoose = require('mongoose');
 const MONGO_URL = 'mongodb://localhost:27017/DemoApp_Test';
 mongoose.connect(MONGO_URL);
 mongoose.Promise = global.Promise;
-const secret = require('./secret.js');
+const { appSecret } = require('./secret.js');
 
   const sessionOptions = {
-    secret: secret,
+    secret: appSecret,
     resave: false,
     saveUninitialized: true,
     secure: 'auto',

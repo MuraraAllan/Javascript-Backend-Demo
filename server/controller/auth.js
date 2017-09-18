@@ -2,7 +2,7 @@ const STATUS_USER_ERROR = 422;
 const STATUS_NOT_FOUND = 400;
 const STATUS_OK = 200;
 const User = require('../model/mongoose/user');
-const { getUserToken } = require('../utils');
+const { getUserToken, verifyToken } = require('../utils');
 
 const sendUserError = (res, msg = 'something goes wrong, please contact support@nothing.com :)' ) => {
   res.status(STATUS_USER_ERROR);
@@ -65,7 +65,7 @@ const signIn = (req,res) => {
         return;
       }
 // distinguish between jwt accesspoint or session
-      if (req.path === '/signin-jwt') {
+      if (req.path === '/auth/jwt') {
         const token = getUserToken(user); 
         sendStatusOk(res, {token});
         return;
@@ -76,20 +76,59 @@ const signIn = (req,res) => {
   });
 };
 
+const signOut = (req,res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      sendUserError(res, 'You are not logged in');
+      return;
+    }
+    sendStatusOk(res, 'Successfully logged out');
+    return
+  });
+};
+
+const LinkedInAuth = (req,res) => {
+  
+};
+
 const test =  (req,res) => {
   if (req.session.userID) {
-    User.findById(req.session.userID, (err,user) => {
+    User.findById(req.session.userID, (err, user) => {
       sendStatusOk(res, { user: user.email } );
     });
     return;
   }
-  res.status(404);
-  res.send('Sorry, we cannot find that!');
-  return;
+  User.findById(req.userID, (err, user) => {
+    sendStatusOk(res, { user: user.email } );
+    return;
+  });
 }
 
+const restrictedRoutes = (req,res, next) => {
+  const token = req.headers['authorization']
+  if (token) {
+    const decoded = verifyToken(req.headers['authorization']);
+    if (decoded === undefined) {
+      sendUserError(res, 'Your token is invalid, please login again');
+      return
+    }
+    req.userID = decoded.data.id;
+    next();
+    return
+  }
+  if (!req.session.userID) {
+    sendUserError(res, 'You need to Authenticate in order to access the API');
+    return;
+  }
+  next();
+};
+
 module.exports = (server) => {
-  server.get('/me', test);
   server.post('/signup', signUp);
-  server.post('/signin-(jwt|session)$/', signIn);
+  server.post('/signout', signOut);
+  server.post('/auth(/jwt|/session)$/', signIn);
+  server.post('/auth/linkedin/*', LinkedInAuth);
+  server.get('/auth/linkedin/*', LinkedInAuth);
+  server.use(restrictedRoutes);
+  server.get('/me', test);
 }

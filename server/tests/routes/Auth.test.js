@@ -13,15 +13,14 @@ beforeEach((done) => {
   done();
 });
 
-describe('Sign up on mongoDB', () => {
+describe('/Signup', () => {
   beforeEach((done) => {
     endPoint = 'signup';
     User.remove({}, (err) => {
-      if (err) console.log(err)
+      if (err) return err
       done();
     });
   });
-
   it('should return error with missing data', (done) => {
     chai.request(host).post(endPoint)
     .send({ username: '', password: '' })
@@ -34,6 +33,7 @@ describe('Sign up on mongoDB', () => {
     chai.request(host).post(endPoint)
     .send({ username: 'signup@tests.com', password: '1234'})
     .end((err,res) => {
+        if (err) return err
         expect(res).to.have.status(200);
         expect(res.body).to.have.deep.property('token')
         done();
@@ -42,9 +42,9 @@ describe('Sign up on mongoDB', () => {
 });
 
 describe('Authentication Over JWT', () => {
-  describe('/signin-jwt', () => {
+  describe('/auth/jwt', () => {
     beforeEach(() => {
-      endPoint = 'signin-jwt';
+      endPoint = 'auth/jwt';
     });
     it('should return invalid if no user or password', (done) => {
       chai.request(host).post(endPoint)
@@ -54,7 +54,6 @@ describe('Authentication Over JWT', () => {
         done();
       });
     });
-
     it('should return invalid if trying to login with invalid username/password combination', (done) => {  
       chai.request(host).post(endPoint)
       .send({ username: 'uuu', password: 'aaa'})
@@ -63,11 +62,11 @@ describe('Authentication Over JWT', () => {
         done();
       });
     });
-    
     it('should return status ok and a token if user and password are right', (done) => {
       chai.request(host).post(endPoint)
       .send({ username: 'signup@tests.com', password: '1234'})
       .end((err,res) => {
+        if (err) return err
         expect(res).to.have.status(200);
         expect(res.body).to.have.deep.property('token')
         done();
@@ -77,9 +76,9 @@ describe('Authentication Over JWT', () => {
 });
 
 describe('Authentication over Session', () => {
-  describe('/signin-session', () => {
+  describe('/auth/session', () => {
     beforeEach(() => {
-      endPoint = 'signin-session';
+      endPoint = 'auth/session';
     });
     it('should return invalid if no user or password', (done) => {
       chai.request(host).post(endPoint)
@@ -97,19 +96,84 @@ describe('Authentication over Session', () => {
         done();
       });
     });
-    it('should return status ok and display user signup@tests if user and password are right', (done) => {
+    it('should return status ok if user and password are right', (done) => {
       const agent = chai.request.agent(host)
-      agent.post(endPoint)
+      agent
+      .post(endPoint)
       .send({ username: 'signup@tests.com', password: '1234'})
       .end((err,res) => {
         expect(res).to.have.status(200);
-        agent.get('me')
-        .then((res) => {
+        done();
+      });
+    });
+  });
+});
+
+describe('Sign Out', () => {
+  beforeEach((done) => {
+    endPoint = 'signout';
+    done();
+  });
+  it('Should delete the session, when try to reach', (done) => { 
+    const agent = chai.request.agent(host)
+    agent
+    .post('auth/session')
+    .send({ username: 'signup@tests.com', password: '1234'})
+    .then((err, res) => {
+      agent
+      .post(endPoint)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+    });
+  });  
+});
+
+describe('Check if user is authenticated for private Routes', () => {
+  beforeEach((done) => {
+    endPoint = 'me';
+    done();
+  });
+  it('should return user not logged in if trying to access /me without tokenand session', (done) => {
+     chai.request(host).get(endPoint)
+     .end((err,res) => {
+       expect(res).to.have.status(422);
+       expect(res.body.error).to.be.equal('You need to Authenticate in order to access the API');
+       done();
+     });
+  });
+  it('Should return username if logged in (token)', (done) => {
+    chai.request(host).post('auth/jwt')
+      .send({ username: 'signup@tests.com', password: '1234'})
+      .end((err,res) => {
+        if (err) console.log(err)
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.deep.property('token')
+        chai.request(host)
+        .get('me')
+        .set('authorization', res.body.token)
+        .end((err,res) => {
           expect(res).to.be.json;
           expect(res.body).to.have.deep.property('user');
           expect(res.body.user).to.be.equal('signup@tests.com');
           done();
         });
+    });
+  })
+  it('Should return username if logged in (session)', (done) => {
+    const agent = chai.request.agent(host)
+    agent
+    .post('auth/session')
+    .send({ username: 'signup@tests.com', password: '1234'})
+    .then((res) => {
+      expect(res).to.have.status(200);
+      return agent.get(endPoint)
+      .then((res) => {
+        expect(res).to.be.json;
+        expect(res.body).to.have.deep.property('user');
+        expect(res.body.user).to.be.equal('signup@tests.com');
+        done();
       });
     });
   });

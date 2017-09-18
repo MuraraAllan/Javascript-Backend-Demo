@@ -9,7 +9,6 @@ const User = require('../../model/mongoose/user');
 const sinon = require('sinon');
 const bcrypt = require('bcrypt');
 const SALT_COST = 12;
-let userId = 0;
 
 describe('User Model Mongoose Test', () => {
   before((done) => {
@@ -22,7 +21,7 @@ describe('User Model Mongoose Test', () => {
   
   describe('test validation for fields', () => {
     before(() => {
-      wrongInfo = { email: 'nosensevalue', password: '123' }
+      wrongInfo = { email: 'anywrongvalue', password: '123' }
     });
     it('should return err if email is invalid', (done) => {
       User.create(wrongInfo, (err) => {
@@ -45,7 +44,6 @@ describe('User Model Mongoose Test', () => {
       User.create({ email: 'usermodel@tests.com', password: '1234' }, function (err, savedUser) {
         if (err) return err
         expect(savedUser.password).to.not.be.equal('1234');
-        userId = savedUser._id;
         done();
       });
     }); 
@@ -53,7 +51,7 @@ describe('User Model Mongoose Test', () => {
 
   describe('comparePassword method', () => {
     it('should return false for password 123', (done) => {
-      User.findById(userId, (err, user) => {
+      User.findOne({ email: 'usermodel@tests.com' }, (err, user) => {
         user.comparePassword('123').then((res) => {
           expect(res).to.be.equal(false);
           done();
@@ -61,7 +59,7 @@ describe('User Model Mongoose Test', () => {
       });
     });
     it('should return true for password 1234', (done) => {
-      User.findById(userId, (err, user) => {
+      User.findOne({ email: 'usermodel@tests.com' }, (err, user) => {
         user.comparePassword('1234').then((res) => {
           expect(res).to.be.equal(true);
           done();
