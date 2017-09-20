@@ -13,34 +13,6 @@ beforeEach((done) => {
   done();
 });
 
-describe('/Signup', () => {
-  beforeEach((done) => {
-    endPoint = 'signup';
-    User.remove({}, (err) => {
-      if (err) return err
-      done();
-    });
-  });
-  it('should return error with missing data', (done) => {
-    chai.request(host).post(endPoint)
-    .send({ username: '', password: '' })
-    .end((err,res) => {
-      expect(res).to.have.status(422);
-      done();
-    });
-  });
-  it('should create user and receive the auth token.', (done) => {
-    chai.request(host).post(endPoint)
-    .send({ username: 'signup@tests.com', password: '1234'})
-    .end((err,res) => {
-        if (err) return err
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.deep.property('token')
-        done();
-    });
-  });
-});
-
 describe('Authentication Over JWT', () => {
   describe('/auth/jwt', () => {
     beforeEach(() => {
@@ -111,7 +83,7 @@ describe('Authentication over Session', () => {
 
 describe('Sign Out', () => {
   beforeEach((done) => {
-    endPoint = 'signout';
+    endPoint = 'auth/signout';
     done();
   });
   it('Should delete the session, when try to reach', (done) => { 
@@ -132,7 +104,7 @@ describe('Sign Out', () => {
 
 describe('Check if user is authenticated for private Routes', () => {
   beforeEach((done) => {
-    endPoint = 'me';
+    endPoint = '/user/me';
     done();
   });
   it('should return user not logged in if trying to access /me without tokenand session', (done) => {

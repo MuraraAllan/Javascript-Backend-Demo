@@ -82,7 +82,7 @@ const signOut = (req,res) => {
       sendUserError(res, 'You are not logged in');
       return;
     }
-    sendStatusOk(res, 'Successfully logged out');
+    sendStatusOk(res, { loggedOut: true });
     return
   });
 };
@@ -125,7 +125,7 @@ const restrictedRoutes = (req,res, next) => {
 
 module.exports = (server) => {
   server.post('/signup', signUp);
-  server.post('/signout', signOut);
+  server.post('/auth/signout', signOut);
   server.post('/auth(/jwt|/session)$/', signIn);
   server.post('/auth/linkedin/*', LinkedInAuth);
   server.get('/auth/linkedin/*', LinkedInAuth);
