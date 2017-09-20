@@ -5,7 +5,7 @@ const server = express();
 const session = require('express-session');
 const PORT = 8000; 
 const mongoose = require('mongoose');
-const MONGO_URL = 'mongodb://localhost:27017/DemoApp_Test';
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/DemoApp_Test';
 mongoose.connect(MONGO_URL);
 mongoose.Promise = global.Promise;
 const { appSecret } = require('./secret.js');
@@ -20,7 +20,9 @@ const { appSecret } = require('./secret.js');
   server.set('trust proxy', 1);
   server.use(bodyParser.json());
   server.use(session(sessionOptions));
-  // ./controllers/index
+  // ./controllers/auth 
+  // allow routes /auth/:type
+  // check for used logged in, after that expose private routes ( graphQL server )
   authMiddleware(server);
 
   server.listen(PORT, () => { 
