@@ -1,30 +1,7 @@
-const STATUS_USER_ERROR = 422;
-const STATUS_NOT_FOUND = 400;
-const STATUS_OK = 200;
 const User = require('../model/mongoose/user');
 const { getUserToken, verifyToken } = require('../utils');
-
-const sendUserError = (res, msg = 'something goes wrong, please contact support@nothing.com :)' ) => {
-  res.status(STATUS_USER_ERROR);
-  res.json({error: msg});
-  return;
-} 
-
-const sendStatusOk = (res ,msg = {ok: true}) => {
-  res.status(STATUS_OK);
-  res.json(msg);
-  return;
-} 
-const checkUserData = (req) => {
-  if (!req.body.username || !req.body.password) {
-    return false;
-  }
-  return true;
-};
-
-const sendNotFound = (res, msg) => {
-
-}
+const { STATUS_USER_ERROR, STATUS_NOT_FOUND, STATUS_OK, sendUserError, sendStatusOk, checkUserData } = require('./routeConstants');
+const userRoutes = require('./user');
 const signUp = (req, res) => {
   // create a new user and return a valid JWT token to the client
   if (!checkUserData(req)) {
@@ -87,23 +64,6 @@ const signOut = (req,res) => {
   });
 };
 
-const LinkedInAuth = (req,res) => {
-  
-};
-
-const test =  (req,res) => {
-  if (req.session.userID) {
-    User.findById(req.session.userID, (err, user) => {
-      sendStatusOk(res, { user: user.email } );
-    });
-    return;
-  }
-  User.findById(req.userID, (err, user) => {
-    sendStatusOk(res, { user: user.email } );
-    return;
-  });
-}
-
 const restrictedRoutes = (req,res, next) => {
   const token = req.headers['authorization']
   if (token) {
@@ -124,11 +84,11 @@ const restrictedRoutes = (req,res, next) => {
 };
 
 module.exports = (server) => {
-  server.post('/signup', signUp);
+  server.post('/user/signup', userRoutes.signUp);
   server.post('/auth/signout', signOut);
   server.post('/auth(/jwt|/session)$/', signIn);
-  server.post('/auth/linkedin/*', LinkedInAuth);
-  server.get('/auth/linkedin/*', LinkedInAuth);
+//  server.post('/auth/linkedin/*', LinkedInAuth);
+//  server.get('/auth/linkedin/*', LinkedInAuth);
   server.use(restrictedRoutes);
-  server.get('/me', test);
+  userRoutes(server);
 }
