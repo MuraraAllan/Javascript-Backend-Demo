@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const authMiddleware = require('./controller/auth');
+const router = require('./controller/auth');
 const server = express();
 const session = require('express-session');
 const PORT = 8000; 
@@ -23,7 +23,8 @@ const { appSecret } = require('./secret.js');
   // ./controllers/auth 
   // allow routes /auth/:type
   // check for used logged in, after that expose private routes ( graphQL server )
-  authMiddleware(server);
+  router(server);
+//protected user routes
 
   server.listen(PORT, () => { 
      console.log('Server is runing over 8000, hope you have fun looking over my code :)');

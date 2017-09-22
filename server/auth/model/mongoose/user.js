@@ -7,9 +7,8 @@ mongoose.promise = global.Promise;
 mongoose.mpromise = global.Promise;
 //model user will be responsible to return bcrypted password 
 const userSchema = new Schema({
-  name: {   
-    type: String,
-  },
+  city: String,
+  age: Number, 
   password : {
     type: String,
     required: true,

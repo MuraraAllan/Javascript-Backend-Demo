@@ -15,8 +15,11 @@ const verifyToken = (token) => {
   });
 };
 
+const findUserID = req => req.session.userID ? req.session.userID : req.userID
+
 module.exports = {
   getUserToken,
   verifyToken,
+  findUserID,
 };
 
