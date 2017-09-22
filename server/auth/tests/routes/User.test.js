@@ -45,11 +45,17 @@ describe('PUT /user/:email', () => {
  beforeEach((done) => {
     endPoint = 'user/signup@tests.com';
   });
-  it('should return that just age and city are editable', (done) => {
-    expect(1).to.be.equal(2);
-    done();
+  it.skip('should return that just age and city are editable', (done) => {
+    chai.request(host)  
+    .put(endPoint)
+    .send({ home: "blalbalba" })
+    .end((err, res) => { 
+      expect(res).to.have.status(422);
+      expect(res.body.error).to.be.equal('Only age and City could be updated');  
+      done();
+    });
   });
-  it('should update signup@tests.com age to 99', (done) => {
+  it.skip('should update signup@tests.com age to 99', (done) => {
     expect(1).to.be.equal(2);
     done();
   });
@@ -57,18 +63,67 @@ describe('PUT /user/:email', () => {
 
 
 describe('DELETE /user', () => {
-  it('should delete current logged in user.', (done) => {
-    expect(1).to.be.equal(2);
-    done();
+  beforeEach((done) => {
+    endPoint = 'user';
+    done();   
+  });
+  it('Should delete current logged in user (token)', (done) => {
+    new User( { email: 'delete@tests.com', password: '1234' }).save((err, user) => {
+      chai.request(host).post('auth/jwt')
+        .send({ username: 'delete@tests.com', password: '1234'})
+        .end((err,res) => {
+  //        if (err) console.log(err)
+          expect(res).to.have.status(200);
+          expect(res.body).to.have.deep.property('token')
+          chai.request(host)
+          .delete(endPoint)
+          .set('authorization', res.body.token)
+          .end((err,res) => {
+            expect(res).to.be.json;
+            expect(res.body).to.have.deep.property('deleted');
+            expect(res.body.deleted).to.be.equal(true);
+            done();
+          });
+      });
+    });
+  })
+
+  it('Should delete current logged in user (session)', (done) => {
+    new User( { email: 'delete@tests.com', password: '1234' }).save((err, user) => {
+      const agent = chai.request.agent(host)
+      agent
+      .post('auth/session')
+      .send({ username: 'delete@tests.com', password: '1234'})
+      .then((res) => {
+        expect(res).to.have.status(200);
+        return agent.delete(endPoint)
+        .then((res) => {  
+          expect(res).to.be.json;
+          expect(res.body).to.have.deep.property('deleted');
+          expect(res.body.deleted).to.be.equal(true);
+          done();
+        });
+      });
+    });
+  }); 
+  
+  it('Should return invalid data.', (done) => {
+    chai.request(host)
+    .post('auth/session')
+    .send({ username: 'delete@tests.com', password: '1234'})
+    .end((err, res) => {
+      expect(res).to.have.status(422);
+      done();
+    });
   });
 });
 
 describe('GET /user', () => {
   beforeEach((done) => {
-    endPoint = '/user/me';
+    endPoint = 'user';
     done();
   });
- it('Should return username if logged in (token)', (done) => {
+  it('Should return username if logged in (token)', (done) => {
     chai.request(host).post('auth/jwt')
       .send({ username: 'signup@tests.com', password: '1234'})
       .end((err,res) => {
@@ -76,7 +131,7 @@ describe('GET /user', () => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.deep.property('token')
         chai.request(host)
-        .get('me')
+        .get('user')
         .set('authorization', res.body.token)
         .end((err,res) => {
           expect(res).to.be.json;

@@ -9,10 +9,15 @@ const User = require('../../model/mongoose/user');
 
 chai.use(chaiHTTP);
 beforeEach((done) => { 
-  host = 'http://localhost:8000/'
+  host = 'http://localhost:8000/'    
   done();
 });
-
+before(() => {
+  User.remove({}, (err) => {
+   if (err) return err
+  });
+  new User( { email: 'signup@tests.com', password: '1234' }).save()
+});
 describe('Authentication Over JWT', () => {
   describe('/auth/jwt', () => {
     beforeEach(() => {
@@ -38,7 +43,7 @@ describe('Authentication Over JWT', () => {
       chai.request(host).post(endPoint)
       .send({ username: 'signup@tests.com', password: '1234'})
       .end((err,res) => {
-        if (err) return err
+        if (err) done(err)
         expect(res).to.have.status(200);
         expect(res.body).to.have.deep.property('token')
         done();
@@ -104,7 +109,7 @@ describe('Sign Out', () => {
 
 describe('Check if user is authenticated for private Routes', () => {
   beforeEach((done) => {
-    endPoint = '/user/me';
+    endPoint = 'user';
     done();
   });
   it('should return user not logged in if trying to access /me without tokenand session', (done) => {
@@ -123,7 +128,7 @@ describe('Check if user is authenticated for private Routes', () => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.deep.property('token')
         chai.request(host)
-        .get('me')
+        .get('user')
         .set('authorization', res.body.token)
         .end((err,res) => {
           expect(res).to.be.json;
