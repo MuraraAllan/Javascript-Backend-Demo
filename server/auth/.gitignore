@@ -1,4 +1,4 @@
 node_modules
 secret.js
 *.js.swp
-*.json
+package-lock.json

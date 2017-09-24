@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.18.1",
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
+    "express": "^4.15.4",
+    "express-session": "^1.15.5",
+    "jsonwebtoken": "^8.0.1",
+    "mocha": "^3.5.3",
+    "mocha-http": "^0.2.5",
+    "mongoose": "^4.11.11",
+    "sinon": "^3.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha -b ./tests/* ",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
