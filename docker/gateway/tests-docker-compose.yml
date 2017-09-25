@@ -1,0 +1,14 @@
+version: "3"
+services:
+    gateway:
+        image: muraraallan/gateway:test
+        depends_on:
+            - mongo
+        links:
+            - mongo
+        environment:
+            NODE_ENV: Test
+            MONGO_URL: mongodb://mongo/DemoApp_Test
+        entrypoint: "node server && \ npm test"
+    mongo:
+        image: mongo

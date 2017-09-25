@@ -21,7 +21,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "mocha -b ./tests/* ",
+    "test": "mocha -b tests/auth/* ",
     "start": "node server.js"
   },
   "author": "",

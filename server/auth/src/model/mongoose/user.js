@@ -32,6 +32,10 @@ userSchema.methods.comparePassword = function (pass) {
   }).then((res) => res);
 };
 
+userSchema.query.byEmail = function(email) {
+  return this.find({ email: email });
+};
+
 //pre save hook to convert password into hashed password
 userSchema.pre('save', function (next) {
   if (this.password && this.isNew) {
@@ -45,6 +49,7 @@ userSchema.pre('save', function (next) {
     })
   }
 });
+
 
 const User = model.call(mongoose,'User',  userSchema);
 

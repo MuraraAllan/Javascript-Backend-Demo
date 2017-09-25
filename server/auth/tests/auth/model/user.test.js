@@ -5,7 +5,7 @@ const chaiHTTP = require('chai-http');
 const mongoose = require('mongoose');
 const MONGO_URL = 'mongodb://localhost:27017/DemoApp_Test';
 mongoose.connect(MONGO_URL);
-const User = require('../../model/mongoose/user');
+const User = require('../../../src/model/mongoose/user');
 const sinon = require('sinon');
 const bcrypt = require('bcrypt');
 const SALT_COST = 12;

@@ -7,7 +7,7 @@ services:
         links:
             - mongo
         environment:
-            NODE_ENV: development
+            NODE_ENV: Production
             MONGO_URL: mongodb://mongo/DemoApp
         entrypoint: "node server"
     mongo:

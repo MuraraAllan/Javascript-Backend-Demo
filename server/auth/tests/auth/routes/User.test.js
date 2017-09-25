@@ -3,9 +3,13 @@ const chai = require('chai');
 const expect = chai.expect;
 const chaiHTTP = require('chai-http');
 const mongoose = require('mongoose');
-const MONGO_URL = 'mongodb://localhost:27017/DemoApp_Test';
-mongoose.connect(MONGO_URL);
-const User = require('../../model/mongoose/user');
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/DemoApp_Test';
+const User = require('../../../src/model/mongoose/user');
+const clearDatabase = async () => {
+  User.remove({}, (err) => {
+    if (err) return err
+  });
+};
 
 chai.use(chaiHTTP);
 beforeEach((done) => { 
@@ -16,10 +20,7 @@ beforeEach((done) => {
 describe('POST /User/Signup', () => {
   beforeEach((done) => {
     endPoint = 'user/signup';
-    User.remove({}, (err) => {
-      if (err) return err
-      done();
-    });
+    clearDatabase().then(done());
   });
   it('should return error with missing data', (done) => {
     chai.request(host).post(endPoint)
@@ -44,20 +45,21 @@ describe('POST /User/Signup', () => {
 describe('PUT /user/:email', () => {
  beforeEach((done) => {
     endPoint = 'user/signup@tests.com';
-  });
-  it.skip('should return that just age and city are editable', (done) => {
-    chai.request(host)  
-    .put(endPoint)
-    .send({ home: "blalbalba" })
-    .end((err, res) => { 
-      expect(res).to.have.status(422);
-      expect(res.body.error).to.be.equal('Only age and City could be updated');  
-      done();
-    });
-  });
-  it.skip('should update signup@tests.com age to 99', (done) => {
-    expect(1).to.be.equal(2);
     done();
+  });
+  it('should return updated:true', (done) => {
+    const agent = chai.request.agent(host)
+    agent.post('auth/session')
+    .send({ username: 'signup@tests.com', password: '1234'})
+    .then((res) => {
+      agent.put(endPoint)
+      .send({ city: "Jaraguá do Sul", age: "26" })
+      .end((err, res) => { 
+        expect(res).to.have.status(200);
+        expect(res.body.updated).to.be.equal(true);  
+        done();
+      });
+    });
   });
 });
 
@@ -65,14 +67,13 @@ describe('PUT /user/:email', () => {
 describe('DELETE /user', () => {
   beforeEach((done) => {
     endPoint = 'user';
-    done();   
+    done()
   });
   it('Should delete current logged in user (token)', (done) => {
     new User( { email: 'delete@tests.com', password: '1234' }).save((err, user) => {
       chai.request(host).post('auth/jwt')
         .send({ username: 'delete@tests.com', password: '1234'})
         .end((err,res) => {
-  //        if (err) console.log(err)
           expect(res).to.have.status(200);
           expect(res.body).to.have.deep.property('token')
           chai.request(host)
@@ -89,13 +90,13 @@ describe('DELETE /user', () => {
   })
 
   it('Should delete current logged in user (session)', (done) => {
-    new User( { email: 'delete@tests.com', password: '1234' }).save((err, user) => {
+    new User({ email: 'delete@tests.com', password: '1234' }).save((err, user) => {
       const agent = chai.request.agent(host)
       agent
       .post('auth/session')
       .send({ username: 'delete@tests.com', password: '1234'})
       .then((res) => {
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(200)
         return agent.delete(endPoint)
         .then((res) => {  
           expect(res).to.be.json;
@@ -105,7 +106,8 @@ describe('DELETE /user', () => {
         });
       });
     });
-  }); 
+  });
+ 
   
   it('Should return invalid data.', (done) => {
     chai.request(host)

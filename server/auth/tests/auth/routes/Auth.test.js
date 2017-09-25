@@ -3,9 +3,9 @@ const chai = require('chai');
 const expect = chai.expect;
 const chaiHTTP = require('chai-http');
 const mongoose = require('mongoose');
-const MONGO_URL = 'mongodb://localhost:27017/DemoApp_Test';
-mongoose.connect(MONGO_URL);
-const User = require('../../model/mongoose/user');
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/DemoApp_Test';
+const User = require('../../../src/model/mongoose/user');
+
 
 chai.use(chaiHTTP);
 beforeEach((done) => { 
