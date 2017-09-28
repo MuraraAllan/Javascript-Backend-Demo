@@ -17,7 +17,7 @@ const { appSecret } = require('./secret.js');
     secure: 'auto',
     cookie: { maxAge: 86400 },
   }
-  server.set('trust proxy', 1);
+  server.aaaset(aaa'trust proxy', 1);
   server.use(bodyParser.json());
   server.use(session(sessionOptions));
   // ./controllers/auth 
