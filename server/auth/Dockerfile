@@ -1,6 +1,6 @@
-FROM  node:8.5
+FROM  node:8.6
 # Copy contents into the gateway container
-ADD  /src /gateway
+ADD  src/ /gateway
 # Set the working directory to   container
 WORKDIR /gateway
 COPY package.json /gateway/package.json
