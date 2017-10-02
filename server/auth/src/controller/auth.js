@@ -77,7 +77,7 @@ const restrictedRoutes = (req,res, next) => {
     return
   }
   if (!req.session.userID) {
-    sendUserError(res, 'You need to Authenticate in order to access the API');
+    sendUserError(res, 'You need to Authenticate in order to access the API, please make a POST request to /auth/session with a valid username and password.');
     return;
   }
   next();
