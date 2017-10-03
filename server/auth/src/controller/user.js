@@ -1,6 +1,6 @@
-const { STATUS_USER_ERROR, STATUS_NOT_FOUND, STATUS_OK, sendUserError, sendStatusOk, checkUserData } = require('./routeConstants');
+const { sendUserError, sendStatusOk, checkUserData } = require('./routeConstants');
 const User = require('../model/mongoose/user'); 
-const { getUserToken, verifyToken, findUserID } = require('../utils');
+const { getUserToken, findUserID } = require('../utils');
 
 const me = (req,res) => { 
   const userID = findUserID(req);
@@ -24,7 +24,7 @@ const signUp = (req, res) => {
 
 const deleteMe = (req, res) => {
   const userID = findUserID(req);
-  User.findByIdAndRemove(userID , (err, user) => {
+  User.findByIdAndRemove(userID , (err) => {
     if (err) return sendUserError(err);
     return sendStatusOk(res, { deleted: true } ); 
   }); 
@@ -37,7 +37,7 @@ const updateUser = (req, res) => {
   const age = req.body.age;
   const city = req.body.city;
   const update = {age, city}; 
-  User.update({ email: userEmail },{ $set: update }, (err, ret) => {
+  User.update({ email: userEmail },{ $set: update }, (err) => {
     if (err) return sendUserError(res, err);
     return sendStatusOk(res, { updated: true });
   });

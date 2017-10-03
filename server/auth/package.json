@@ -19,10 +19,14 @@
     "mongoose": "^4.11.11",
     "sinon": "^3.3.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^4.8.0"
+  },
   "scripts": {
     "test": "mocha -b tests/auth/* ",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "node node_modules/.bin/eslint *.js src/* " ,
+    "lintfix": "node node_modules/.bin/eslint --fix *.js src/*"
   },
   "author": "",
   "license": "ISC"

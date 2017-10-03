@@ -20,15 +20,14 @@ const userSchema = new Schema({
     required: true,
     validate: {
       validator: (email) => {
-        return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+        return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
       }
     }
   },
 });
-//compare provided password with the stored bcrypted password
 userSchema.methods.comparePassword = function (pass) {
-  return new Promise((resolve, reject) => {   
-    resolve(bcrypt.compare(pass, this.password))
+  return new Promise((resolve) => {   
+    resolve(bcrypt.compare(pass, this.password));
   }).then((res) => res);
 };
 
@@ -46,7 +45,7 @@ userSchema.pre('save', function (next) {
         this.password = newPass;
         next();
       });
-    })
+    });
   }
 });
 
