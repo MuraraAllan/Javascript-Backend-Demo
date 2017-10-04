@@ -1,6 +1,6 @@
 const User = require('../model/mongoose/user');
 const { getUserToken, verifyToken } = require('../utils');
-const {sendUserError, sendStatusOk, checkUserData } = require('./routeConstants');
+const { sendUserError, sendStatusOk, checkUserData } = require('./routeConstants');
 const userRoutes = require('./user');
 
 const signIn = (req,res) => {

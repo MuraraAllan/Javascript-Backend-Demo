@@ -116,7 +116,7 @@ describe('Check if user is authenticated for private Routes', () => {
      chai.request(host).get(endPoint)
      .end((err,res) => {
        expect(res).to.have.status(422);
-       expect(res.body.error).to.be.equal('You need to Authenticate in order to access the API');
+       expect(res.body.error).to.be.equal('You need to Authenticate in order to access the API, please make a POST request to /auth/session with a valid username and password.');
        done();
      });
   });
