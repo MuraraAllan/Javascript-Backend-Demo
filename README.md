@@ -16,8 +16,7 @@ Bothe endpoints are documented.
 ##
 ## Using the project
 
-There are 3 ways to see the project runing, for the first two you need to download the project.
-Both should be executed from server/auth directory.
+There are 2 ways to use the project.
 
 ### Docker
 
@@ -31,7 +30,7 @@ Docker has no test container neither a command to force the tests to run before 
 
 ### Locally
 
-Reach the directory specified and run ```npm install```.
+Download from github and run ```npm install```.
 It will download the necessary package for your local machine.
 
 ###### Testing
@@ -45,8 +44,3 @@ Copy the secretdocker.js to src/secret.js and change 'yoursecrethere' for your s
 [Install mongodb](https://docs.mongodb.com/manual/installation/) and run in port 27017.
 
 Then ```node src/server.js```.
-
-###### Using Hosted Application
-
-The application is hosted over www.whyushouldhireme.com as described in the Intro and the Routes.
-
