@@ -24,8 +24,8 @@
   },
   "scripts": {
     "test": "mocha -b tests/auth/* ",
-    "start": "node server.js",
-    "lint": "node node_modules/.bin/eslint *.js src/* " ,
+    "start": "node src/server.js",
+    "lint": "node node_modules/.bin/eslint *.js src/* ",
     "lintfix": "node node_modules/.bin/eslint --fix *.js src/*"
   },
   "author": "",
