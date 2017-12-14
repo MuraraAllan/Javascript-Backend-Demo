@@ -6,7 +6,7 @@
 
 #### POST [/auth/jwt]
 
-> Authenticate provided user returning a valid JWT token.
+> Authenticate returning a valid JWT token.
 ``` 
 Example :
 {
@@ -37,7 +37,7 @@ status: 200 OK
 
 #### POST [/auth/session]
 
-> Authenticate provided user and store a valid session.
+> Authenticate and generate a valid session.
 ``` 
 Example :
 {
@@ -68,7 +68,7 @@ status: 200 OK
 
 #### POST [/auth/signout]
 
-> Sign Out from current user. JWT Tokens keep valid even after signout. Exclusive for Session based authentications.
+> Sign Out. Exclusive for Session based authentications. (JWT Tokens keep valid even after signout)
 
 
 ### Auth Parameters 
