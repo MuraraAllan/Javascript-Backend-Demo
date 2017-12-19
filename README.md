@@ -8,7 +8,7 @@ Developed following TDD.
 
 # Endpoints 
 
-Bothe endpoints are documented.
+Both endpoints are documented.
 
 ### [user](https://github.com/MuraraAllan/Javascript-Backend-Demo/blob/master/documentation/user.md)
 
@@ -25,8 +25,6 @@ Using docker-compose you can build the image of the folder and run the project, 
 ```
 docker-compose build && docker-compose up
 ```
-Docker has no test container neither a command to force the tests to run before the application.
-
 
 ### Locally
 
