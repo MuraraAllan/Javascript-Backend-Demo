@@ -1,7 +1,7 @@
 # Authentication Project
 This is an authentication endpoint over NodeJS using packages body-parser, mongoose, bcrypt, express.
 Its routes are tested and contains a basic CRUD model that respects the auth Middleware.  
-Hosted on AWS EC2, read to be hosted as a container over docker, CI over Jenkins running the lint and after running Unit tests. As it is just an Authentication Module, has a simple Top-Down in the Unit tests that check if the middleware still working for endpoints that require auth.  
+Ready to be hosted as a container over docker, CI over Jenkins running the lint and after running Unit tests. As it is just an Authentication Module, has a simple Top-Down in the Unit tests that check if the middleware still working for endpoints that require auth.  
 
 Developed following TDD.
 ##
